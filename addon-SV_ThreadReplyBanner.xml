@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="SV_ThreadReplyBanner" title="Thread Reply Banner" version_string="1.0.0" version_id="10000" url="" install_callback_class="SV_ThreadReplyBanner_Listener" install_callback_method="install" uninstall_callback_class="SV_ThreadReplyBanner_Listener" uninstall_callback_method="uninstall">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates/>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="load_class" execute_order="10" callback_class="SV_ThreadReplyBanner_Listener" callback_method="load_class" active="1" hint="XenForo_ControllerPublic_Thread" description="XenForo_ControllerPublic_Thread"/>
+    <listener event_id="load_class" execute_order="10" callback_class="SV_ThreadReplyBanner_Listener" callback_method="load_class" active="1" hint="XenForo_Model_Thread" description="XenForo_Model_Thread"/>
+    <listener event_id="load_class" execute_order="10" callback_class="SV_ThreadReplyBanner_Listener" callback_method="load_class" active="1" hint="XenForo_DataWriter_Discussion_Thread" description="XenForo_DataWriter_Discussion_Thread"/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups/>
+  <permissions>
+    <permission_groups/>
+    <permissions>
+      <permission permission_group_id="forum" permission_id="sv_replybanner_manage" permission_type="flag" default_value="unset" interface_group_id="forumModeratorPermissions" display_order="1000"/>
+      <permission permission_group_id="forum" permission_id="sv_replybanner_show" permission_type="flag" default_value="unset" interface_group_id="forumPermissions" display_order="1000"/>
+    </permissions>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="moderator_log_thread_replybanner" version_id="10000" version_string="1.0.0"><![CDATA[Created or updated a thread reply banner]]></phrase>
+    <phrase title="moderator_log_thread_replybanner_deleted" version_id="10000" version_string="1.0.0"><![CDATA[Deleted a thread reply banner]]></phrase>
+    <phrase title="permission_forum_sv_replybanner_manage" version_id="10000" version_string="1.0.0"><![CDATA[Manage Thread Reply Banner]]></phrase>
+    <phrase title="permission_forum_sv_replybanner_show" version_id="10000" version_string="1.0.0"><![CDATA[View Thread Reply Banner]]></phrase>
+    <phrase title="thread_reply_banner" version_id="10000" version_string="1.0.0"><![CDATA[Thread Reply Banner]]></phrase>
+    <phrase title="thread_reply_banner_explain" version_id="10000" version_string="1.0.0"><![CDATA[Thread reply banners are displayed above the editor.]]></phrase>
+  </phrases>
+  <route_prefixes/>
+  <style_properties/>
+  <templates>
+    <template title="SV_ThreadReplyBanner" version_id="10000" version_string="1.0.0"><![CDATA[<xen:if is="{$thread.banner}">
+	<xen:require css="panel_scroller.css" />
+	<div class="PanelScroller" id="Notices" style="display: block;">
+		<div class="scrollContainer">
+			<div class="PanelContainer">
+				<ol class="Panels" style="position: static;">
+					<li class="panel Notice DismissParent">
+						<div class="baseHtml noticeContent">{xen:raw $thread.banner}</div>
+					</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</xen:if>]]></template>
+    <template title="SV_ThreadReplyBanner_Fields" version_id="10000" version_string="1.0.0"><![CDATA[<xen:if is="{$canEditThreadReplyBanner}">
+	<dl class="ctrlUnit">
+		<dt><label for="ctrl_thread_reply_banner">{xen:phrase thread_reply_banner}:</label>
+		<dfn>{xen:phrase you_may_use_bb_code}</dfn></dt>
+		<dd><textarea name="thread_reply_banner" id="ctrl_thread_reply_banner" class="textCtrl Elastic" maxlength="65536">{$thread.banner}</textarea>
+		<p class="explain">{xen:phrase thread_reply_banner_explain}</p></dd>
+	</dl>
+</xen:if>]]></template>
+  </templates>
+  <public_template_modifications>
+    <modification template="thread_fields_status" modification_key="SV_ThreadReplyBanner_Fields_thread_fields_status" description="Edit thread reply banner from editing a thread" execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#$#i]]></find>
+      <replace><![CDATA[$0
+<xen:include template="SV_ThreadReplyBanner_Fields" />]]></replace>
+    </modification>
+    <modification template="quick_reply" modification_key="SV_ThreadReplyBanner_quick_reply" description="Add Thread Reply Banner to quick reply" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<div class="quickReply message">]]></find>
+      <replace><![CDATA[<xen:include template="SV_ThreadReplyBanner" />
+$0]]></replace>
+    </modification>
+    <modification template="thread_reply" modification_key="SV_ThreadReplyBanner_thread_reply" description="Add Thread Reply banner to 'more options' reply" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<!-- slot: after_guest -->]]></find>
+      <replace><![CDATA[$0
+<xen:include template="SV_ThreadReplyBanner" />]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
