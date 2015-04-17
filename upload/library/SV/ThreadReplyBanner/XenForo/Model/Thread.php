@@ -53,21 +53,21 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
         $db = $this->_getDb();
         if(empty($text))
         {
+            $db->query("delete from xf_thread_banner where thread_id = ? ", $threadId);
             if ($cacheObject)
             {
                 $cacheObject->remove($cacheId);
             }
-            $db->query("delete from xf_thread_banner where thread_id = ? ", $threadId);
         }
         else
         {
+            $db->query("insert xf_thread_banner (thread_id, raw_text) values (?,?) ON DUPLICATE KEY UPDATE raw_text = VALUES(raw_text) ", array($threadId,$text));
             if ($cacheObject)
             {
                 $bbCodeParser = XenForo_BbCode_Parser::create(XenForo_BbCode_Formatter_Base::create('Base'));
                 $banner = new XenForo_BbCode_TextWrapper($text, $bbCodeParser);
                 $cacheObject->save('' . $banner, $cacheId, array(), 86400);
             }
-            $db->query("insert xf_thread_banner (thread_id, raw_text) values (?,?) ON DUPLICATE KEY UPDATE raw_text = VALUES(raw_text) ", array($threadId,$text));
         }
         $db->query("update xf_thread
             set has_banner = exists(select thread_id
