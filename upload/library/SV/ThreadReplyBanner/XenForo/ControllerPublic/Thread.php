@@ -43,8 +43,17 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
 
     public function actionAddReply()
     {
-        $response = parent::actionReply();
+        $response = parent::actionAddReply();
+        if ($response instanceof XenForo_ControllerResponse_View && !empty($response->params['thread']))
+        {
+            $response->params['thread']['banner'] = $this->_getThreadModel()->GetThreadReplyBanner($response->params['thread']);
+        }
+        return  $response;
+    }
 
+    public function actionReply()
+    {
+        $response = parent::actionReply();
         if ($response instanceof XenForo_ControllerResponse_View && !empty($response->params['thread']))
         {
             $response->params['thread']['banner'] = $this->_getThreadModel()->GetThreadReplyBanner($response->params['thread']);
