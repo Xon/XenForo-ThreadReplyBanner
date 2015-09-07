@@ -40,7 +40,12 @@ class SV_ThreadReplyBanner_Installer
         $db->query("
             DROP TABLE IF EXISTS xf_thread_banner
         ");
-        
+
+        $db->query("
+            DELETE FROM xf_permission_entry
+            WHERE permission_group_id = 'forum' and permission_id in ('sv_replybanner_show', 'sv_replybanner_manage')
+        ");
+
         SV_Utils_Install::dropColumn('xf_thread', 'has_banner');
 
         return true;
