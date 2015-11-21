@@ -16,19 +16,23 @@ class SV_ThreadReplyBanner_Installer
 
         SV_Utils_Install::addColumn('xf_thread', 'has_banner', 'TINYINT NOT NULL DEFAULT 0');
 
-        $db->query("
-            insert ignore into xf_permission_entry (user_group_id, user_id, permission_group_id, permission_id, permission_value, permission_value_int)
-                select distinct user_group_id, user_id, convert(permission_group_id using utf8), 'sv_replybanner_show', permission_value, permission_value_int
-                from xf_permission_entry
-                where permission_group_id = 'forum' and  permission_id in ('postReply')
-        ");
+        if ($version == 0)
+        {
+            $db->query("
+                insert ignore into xf_permission_entry (user_group_id, user_id, permission_group_id, permission_id, permission_value, permission_value_int)
+                    select distinct user_group_id, user_id, convert(permission_group_id using utf8), 'sv_replybanner_show', permission_value, permission_value_int
+                    from xf_permission_entry
+                    where permission_group_id = 'forum' and  permission_id in ('postReply')
+            ");
 
-        $db->query("
-            insert ignore into xf_permission_entry (user_group_id, user_id, permission_group_id, permission_id, permission_value, permission_value_int)
-                select distinct user_group_id, user_id, convert(permission_group_id using utf8), 'sv_replybanner_manage', permission_value, permission_value_int
-                from xf_permission_entry
-                where permission_group_id = 'forum' and permission_id in ('warn','editAnyPost','deleteAnyPost')
-        ");
+            $db->query("
+                insert ignore into xf_permission_entry (user_group_id, user_id, permission_group_id, permission_id, permission_value, permission_value_int)
+                    select distinct user_group_id, user_id, convert(permission_group_id using utf8), 'sv_replybanner_manage', permission_value, permission_value_int
+                    from xf_permission_entry
+                    where permission_group_id = 'forum' and permission_id in ('warn','editAnyPost','deleteAnyPost')
+            ");
+            XenForo_Model::create('XenForo_Model_Permission')->rebuildPermissionCache();
+        }
 
         return true;
     }
@@ -47,6 +51,7 @@ class SV_ThreadReplyBanner_Installer
         ");
 
         SV_Utils_Install::dropColumn('xf_thread', 'has_banner');
+        XenForo_Model::create('XenForo_Model_Permission')->rebuildPermissionCache();
 
         return true;
     }
