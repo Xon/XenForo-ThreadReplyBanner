@@ -5,8 +5,8 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
     public function actionEdit()
     {
         $response = parent::actionEdit();
-        if ($response instanceof XenForo_ControllerResponse_View && 
-            !empty($response->params['thread']) && 
+        if ($response instanceof XenForo_ControllerResponse_View &&
+            !empty($response->params['thread']) &&
             !empty($response->params['forum']))
         {
             $threadModel = $this->_getThreadModel();
@@ -21,14 +21,7 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
 
     public function actionSave()
     {
-        $threadId = $this->_input->filterSingle('thread_id', XenForo_Input::UINT);
-
-        $threadModel = $this->_getThreadModel();
-        $thread = $threadModel->getThreadById($threadId);
-        if ($threadModel->canManageThreadReplyBanner($thread))
-        {
-            SV_ThreadReplyBanner_Globals::$controller = $this;
-        }
+        SV_ThreadReplyBanner_Globals::$controller = $this;
         return parent::actionSave();
     }
 

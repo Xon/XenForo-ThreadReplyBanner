@@ -29,7 +29,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
                 return $banner;
             }
         }
-        $banner = $this->GetRawThreadReplyBanner($thread['thread_id']);
+        $banner = $this->getRawThreadReplyBanner($thread['thread_id']);
 
         if (!empty($banner))
         {
@@ -76,7 +76,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
             where thread_id = ?", $threadId);
     }
 
-    public function canManageThreadReplyBanner(array $thread, array $forum, array $nodePermissions = null, array $viewingUser = null)
+    public function canManageThreadReplyBanner(array $thread, array $forum, &$errorPhraseKey = '', array $nodePermissions = null, array $viewingUser = null)
     {
         $this->standardizeViewingUserReferenceForNode($thread['node_id'], $viewingUser, $nodePermissions);
 
