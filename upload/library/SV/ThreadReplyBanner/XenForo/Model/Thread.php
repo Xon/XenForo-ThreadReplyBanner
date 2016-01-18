@@ -2,12 +2,12 @@
 
 class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanner_XenForo_Model_Thread
 {
-    public function GetRawThreadReplyBanner($threadId)
+    public function getRawThreadReplyBanner($threadId)
     {
         return $this->_getDb()->fetchOne("select raw_text from xf_thread_banner where thread_id = ?", $threadId);
     }
 
-    public function GetThreadReplyBanner($thread, array $nodePermissions = null, array $viewingUser = null)
+    public function getThreadReplyBanner($thread, array $nodePermissions = null, array $viewingUser = null)
     {
         if (empty($thread['has_banner']))
         {
@@ -46,7 +46,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
         return $banner;
     }
 
-    public function UpdateThreadReplyBanner($threadId, $text)
+    public function updateThreadReplyBanner($threadId, $text)
     {
         $cacheId = 'thread_banner_'.$threadId;
         $cacheObject = $this->_getCache(true);
@@ -76,7 +76,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
             where thread_id = ?", $threadId);
     }
 
-    public function CanManageThreadReplyBanner($thread, array $nodePermissions = null, array $viewingUser = null)
+    public function canManageThreadReplyBanner(array $thread, array $forum, array $nodePermissions = null, array $viewingUser = null)
     {
         $this->standardizeViewingUserReferenceForNode($thread['node_id'], $viewingUser, $nodePermissions);
 

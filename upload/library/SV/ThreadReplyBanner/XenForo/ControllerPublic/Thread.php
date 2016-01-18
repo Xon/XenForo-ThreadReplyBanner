@@ -5,13 +5,15 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
     public function actionEdit()
     {
         $response = parent::actionEdit();
-        if ($response instanceof XenForo_ControllerResponse_View && !empty($response->params['thread']))
+        if ($response instanceof XenForo_ControllerResponse_View && 
+            !empty($response->params['thread']) && 
+            !empty($response->params['forum']))
         {
             $threadModel = $this->_getThreadModel();
-            if ($threadModel->CanManageThreadReplyBanner($response->params['thread']))
+            if ($threadModel->canManageThreadReplyBanner($response->params['thread'], $response->params['forum']))
             {
                 $response->params['canEditThreadReplyBanner'] = true;
-                $response->params['thread']['banner'] = $threadModel->GetRawThreadReplyBanner($response->params['thread']['thread_id']);
+                $response->params['thread']['banner'] = $threadModel->getRawThreadReplyBanner($response->params['thread']['thread_id']);
             }
         }
         return $response;
@@ -23,7 +25,7 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
 
         $threadModel = $this->_getThreadModel();
         $thread = $threadModel->getThreadById($threadId);
-        if ($threadModel->CanManageThreadReplyBanner($thread))
+        if ($threadModel->canManageThreadReplyBanner($thread))
         {
             SV_ThreadReplyBanner_Globals::$controller = $this;
         }
@@ -36,7 +38,7 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
 
         if ($response instanceof XenForo_ControllerResponse_View && !empty($response->params['thread']))
         {
-            $response->params['thread']['banner'] = $this->_getThreadModel()->GetThreadReplyBanner($response->params['thread']);
+            $response->params['thread']['banner'] = $this->_getThreadModel()->getThreadReplyBanner($response->params['thread']);
         }
         return $response;
     }
@@ -46,7 +48,7 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
         $response = parent::actionAddReply();
         if ($response instanceof XenForo_ControllerResponse_View && !empty($response->params['thread']))
         {
-            $response->params['thread']['banner'] = $this->_getThreadModel()->GetThreadReplyBanner($response->params['thread']);
+            $response->params['thread']['banner'] = $this->_getThreadModel()->getThreadReplyBanner($response->params['thread']);
         }
         return  $response;
     }
@@ -56,7 +58,7 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
         $response = parent::actionReply();
         if ($response instanceof XenForo_ControllerResponse_View && !empty($response->params['thread']))
         {
-            $response->params['thread']['banner'] = $this->_getThreadModel()->GetThreadReplyBanner($response->params['thread']);
+            $response->params['thread']['banner'] = $this->_getThreadModel()->getThreadReplyBanner($response->params['thread']);
         }
         return $response;
     }

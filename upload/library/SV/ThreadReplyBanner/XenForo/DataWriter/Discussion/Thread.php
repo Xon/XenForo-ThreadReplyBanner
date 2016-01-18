@@ -17,7 +17,7 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
             {
                 if (strlen($new_banner) <= self::banner_length)
                 {
-                    $threadModel->UpdateThreadReplyBanner($threadId, $new_banner);
+                    $threadModel->updateThreadReplyBanner($threadId, $new_banner);
 
                     $thread = $this->getMergedData();
                     if (empty($new_banner))
