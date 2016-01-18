@@ -4,7 +4,7 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
 {
     const banner_length = 65536;
 
-    protected $new_banner = '';
+    protected $new_banner = null;
 
     protected function _discussionPreSave()
     {
@@ -17,7 +17,7 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
 
             if (empty($forum) || !$threadModel->canManageThreadReplyBanner($thread, $forum))
             {
-                $this->error(new XenForo_Phrase('sv_no_permissions_edit_thread_reply_banner'));
+                return $ret;
             }
 
             if ($this->isUpdate())
@@ -57,7 +57,10 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
     protected function _discussionPostSave()
     {
         parent::_discussionPostSave();
-        $this->_getThreadModel()->updateThreadReplyBanner($this->get('thread_id'), $this->new_banner);
+        if ($this->new_banner !== null)
+        {
+            $this->_getThreadModel()->updateThreadReplyBanner($this->get('thread_id'), $this->new_banner);
+        }
     }
 
     protected function _discussionPostDelete()

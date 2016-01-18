@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="SV_ThreadReplyBanner" title="Thread Reply Banner" version_string="1.0.4" version_id="1000400" url="https://xenforo.com/community/resources/thread-reply-banner.4199/" install_callback_class="SV_ThreadReplyBanner_Installer" install_callback_method="install" uninstall_callback_class="SV_ThreadReplyBanner_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="SV_ThreadReplyBanner" title="Thread Reply Banner" version_string="1.0.4a" version_id="1000401" url="https://xenforo.com/community/resources/thread-reply-banner.4199/" install_callback_class="SV_ThreadReplyBanner_Installer" install_callback_method="install" uninstall_callback_class="SV_ThreadReplyBanner_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -30,7 +30,6 @@
     <phrase title="permission_forum_sv_replybanner_show" version_id="10000" version_string="1.0.0"><![CDATA[View Thread Reply Banner]]></phrase>
     <phrase title="thread_reply_banner" version_id="10000" version_string="1.0.0"><![CDATA[Thread Reply Banner]]></phrase>
     <phrase title="thread_reply_banner_explain" version_id="10000" version_string="1.0.0"><![CDATA[Thread reply banners are displayed above the editor.]]></phrase>
-    <phrase title="sv_no_permissions_edit_thread_reply_banner" version_id="1000400" version_string="1.0.4"><![CDATA[Insufficient permissions to edit thread reply banner.]]></phrase>
   </phrases>
   <route_prefixes/>
   <style_properties/>
