@@ -34,6 +34,16 @@ class SV_ThreadReplyBanner_Installer
             XenForo_Model::create('XenForo_Model_Permission')->rebuildPermissionCache();
         }
 
+        if ($version < 1000402)
+        {
+            // clean-up orphaned thread banners.
+            $db->query('
+                DELETE
+                FROM xf_thread_banner
+                WHERE NOT EXISTS (SELECT thread_id FROM xf_thread)
+            ');
+        }
+
         return true;
     }
 
