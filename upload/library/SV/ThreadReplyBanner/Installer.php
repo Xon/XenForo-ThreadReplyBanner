@@ -31,7 +31,7 @@ class SV_ThreadReplyBanner_Installer
                     from xf_permission_entry
                     where permission_group_id = 'forum' and permission_id in ('warn','editAnyPost','deleteAnyPost')
             ");
-            XenForo_Model::create('XenForo_Model_Permission')->rebuildPermissionCache();
+            XenForo_Application::defer('Permission', array(), 'Permission', true);
         }
 
         if ($version < 1000402)
@@ -61,7 +61,7 @@ class SV_ThreadReplyBanner_Installer
         ");
 
         SV_Utils_Install::dropColumn('xf_thread', 'has_banner');
-        XenForo_Model::create('XenForo_Model_Permission')->rebuildPermissionCache();
+        XenForo_Application::defer('Permission', array(), 'Permission', true);
 
         return true;
     }
