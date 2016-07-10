@@ -16,7 +16,8 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
 
         $this->standardizeViewingUserReferenceForNode($thread['node_id'], $viewingUser, $nodePermissions);
 
-        if (!XenForo_Permission::hasContentPermission($nodePermissions, 'sv_replybanner_show'))
+        if (!XenForo_Permission::hasContentPermission($nodePermissions, 'sv_replybanner_show') &&
+            !XenForo_Permission::hasContentPermission($nodePermissions, 'sv_replybanner_manage'))
         {
             return null;
         }
@@ -39,7 +40,8 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
             if ($cacheObject)
             {
                 // convert to a string context to save
-                $cacheObject->save('' . $banner, $cacheId, array(), 86400);
+                $banner = '' . $banner;
+                $cacheObject->save($banner, $cacheId, array(), 86400);
             }
         }
 
