@@ -4,8 +4,24 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
 {
     public function getRawThreadReplyBanner($threadId)
     {
-        return $this->_getDb()->fetchOne("select raw_text from xf_thread_banner where thread_id = ?", $threadId);
+        return $this->_getDb()->fetchRow("select * from xf_thread_banner where thread_id = ?", $threadId);
     }
+
+    public function getThreadReplyBannerParser()
+    {
+        return XenForo_BbCode_Parser::create(XenForo_BbCode_Formatter_Base::create('Base'));
+    }
+
+    public function renderThreadReplyBanner(XenForo_BbCode_Parser $bbCodeParser, array $banner)
+    {
+        return $bbCodeParser->render($banner['raw_text']);
+    }
+
+    public function getThreadReplyBannerCacheId($threadId)
+    {
+        return 'thread_banner_'.$threadId;
+    }
+
 
     public function getThreadReplyBanner($thread, array $nodePermissions = null, array $viewingUser = null)
     {
@@ -24,33 +40,32 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
 
         if ($cacheObject = $this->_getCache(true))
         {
-            $cacheId = 'thread_banner_'.$thread['thread_id'];
-            if ($banner = $cacheObject->load($cacheId, true))
+            $cacheId = $this->getThreadReplyBannerCacheId($thread['thread_id']);
+            if ($bannerText = $cacheObject->load($cacheId, true))
             {
-                return $banner;
+                return $bannerText;
             }
         }
+        $bannerText = '';
         $banner = $this->getRawThreadReplyBanner($thread['thread_id']);
 
         if (!empty($banner))
         {
-            $bbCodeParser = XenForo_BbCode_Parser::create(XenForo_BbCode_Formatter_Base::create('Base'));
-            $banner = new XenForo_BbCode_TextWrapper($banner, $bbCodeParser);
+            $bbCodeParser = $this->getThreadReplyBannerParser();
+            $bannerText = $this->renderThreadReplyBanner($bbCodeParser, $banner);
 
             if ($cacheObject)
             {
-                // convert to a string context to save
-                $banner = '' . $banner;
-                $cacheObject->save($banner, $cacheId, array(), 86400);
+                $cacheObject->save($bannerText, $cacheId, array(), 86400);
             }
         }
 
-        return $banner;
+        return $bannerText;
     }
 
     public function updateThreadReplyBanner($threadId, $text)
     {
-        $cacheId = 'thread_banner_'.$threadId;
+        $cacheId = $this->getThreadReplyBannerCacheId($threadId);
         $cacheObject = $this->_getCache(true);
         $db = $this->_getDb();
         if(empty($text))
@@ -63,12 +78,13 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
         }
         else
         {
-            $db->query("insert xf_thread_banner (thread_id, raw_text) values (?,?) ON DUPLICATE KEY UPDATE raw_text = VALUES(raw_text) ", array($threadId,$text));
+            $db->query("insert xf_thread_banner (thread_id, raw_text) values (?,?) ON DUPLICATE KEY UPDATE raw_text = VALUES(raw_text) ", array($threadId, $text));
             if ($cacheObject)
             {
-                $bbCodeParser = XenForo_BbCode_Parser::create(XenForo_BbCode_Formatter_Base::create('Base'));
-                $banner = new XenForo_BbCode_TextWrapper($text, $bbCodeParser);
-                $cacheObject->save('' . $banner, $cacheId, array(), 86400);
+                $banner = $this->getRawThreadReplyBanner($threadId);
+                $bbCodeParser = $this->getThreadReplyBannerParser();
+                $bannerText = $this->renderThreadReplyBanner($bbCodeParser, $banner);
+                $cacheObject->save($bannerText, $cacheId, array(), 86400);
             }
         }
         $db->query("update xf_thread

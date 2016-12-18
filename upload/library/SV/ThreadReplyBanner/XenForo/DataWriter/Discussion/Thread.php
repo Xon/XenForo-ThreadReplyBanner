@@ -22,13 +22,14 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
             return;
         }
 
+        $old_banner = '';
         if ($this->isUpdate())
         {
-            $old_banner = $threadModel->getRawThreadReplyBanner($this->get('thread_id'));
-        }
-        else
-        {
-            $old_banner = '';
+            $banner = $threadModel->getRawThreadReplyBanner($this->get('thread_id'));
+            if (!empty($banner['raw_text']))
+            {
+                 $old_banner = $banner['raw_text'];
+            }
         }
 
         $new_banner = SV_ThreadReplyBanner_Globals::$controller->getInput()->filterSingle('thread_reply_banner', XenForo_Input::STRING);

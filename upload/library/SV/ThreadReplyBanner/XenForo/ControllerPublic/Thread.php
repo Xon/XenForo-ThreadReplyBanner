@@ -13,7 +13,7 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
             if ($threadModel->canManageThreadReplyBanner($response->params['thread'], $response->params['forum']))
             {
                 $response->params['canEditThreadReplyBanner'] = true;
-                $response->params['thread']['banner'] = $threadModel->getRawThreadReplyBanner($response->params['thread']['thread_id']);
+                $response->params['thread']['rawbanner'] = $threadModel->getRawThreadReplyBanner($response->params['thread']['thread_id']);
             }
         }
         return $response;
