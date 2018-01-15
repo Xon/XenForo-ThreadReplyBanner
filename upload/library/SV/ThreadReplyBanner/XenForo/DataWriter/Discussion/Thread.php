@@ -13,6 +13,7 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
         {
             return;
         }
+        /** @var SV_ThreadReplyBanner_XenForo_Model_Thread $threadModel */
         $threadModel = $this->_getThreadModel();
         $thread = $this->getMergedData();
         $forum = $this->_getForumData();
@@ -28,12 +29,12 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
             $banner = $threadModel->getRawThreadReplyBanner($this->get('thread_id'));
             if (!empty($banner['raw_text']))
             {
-                 $old_banner = $banner['raw_text'];
+                $old_banner = $banner['raw_text'];
             }
         }
 
         $new_banner = SV_ThreadReplyBanner_Globals::$controller->getInput()->filterSingle('thread_reply_banner', XenForo_Input::STRING);
-        if($new_banner == $old_banner)
+        if ($new_banner == $old_banner)
         {
             return;
         }
@@ -47,21 +48,23 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
             }
             else
             {
-                XenForo_Model_Log::logModeratorAction('thread', $thread, 'replybanner', array('banner' => $new_banner));
+                XenForo_Model_Log::logModeratorAction('thread', $thread, 'replybanner', ['banner' => $new_banner]);
             }
         }
         else
         {
-            $this->error(new XenForo_Phrase('please_enter_value_using_x_characters_or_fewer', array('count' => self::banner_length)));
+            $this->error(new XenForo_Phrase('please_enter_value_using_x_characters_or_fewer', ['count' => self::banner_length]));
         }
     }
 
-    protected function _discussionPostSave()
+    protected function _postSaveAfterTransaction()
     {
-        parent::_discussionPostSave();
+        parent::_postSaveAfterTransaction();
         if ($this->new_banner !== null)
         {
-            $this->_getThreadModel()->updateThreadReplyBanner($this->get('thread_id'), $this->new_banner);
+            /** @var SV_ThreadReplyBanner_XenForo_Model_Thread $threadModel */
+            $threadModel = $this->_getThreadModel();
+            $threadModel->updateThreadReplyBanner($this->get('thread_id'), $this->new_banner);
         }
     }
 
@@ -69,7 +72,8 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
     {
         parent::_discussionPostDelete();
         $this->_db->query(
-            'delete from xf_thread_banner where thread_id = ?'
-        , $this->get('thread_id'));
+            'DELETE FROM xf_thread_banner WHERE thread_id = ?'
+            , $this->get('thread_id')
+        );
     }
 }

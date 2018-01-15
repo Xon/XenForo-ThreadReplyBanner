@@ -1,0 +1,6 @@
+<?php
+
+class XFCP_SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XenForo_ControllerPublic_Thread {}
+class XFCP_SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XenForo_DataWriter_Discussion_Thread {}
+class XFCP_SV_ThreadReplyBanner_XenForo_Model_Thread extends XenForo_Model_Thread {}
+

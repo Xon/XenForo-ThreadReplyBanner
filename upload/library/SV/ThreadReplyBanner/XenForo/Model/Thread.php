@@ -4,7 +4,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
 {
     public function getRawThreadReplyBanner($threadId)
     {
-        return $this->_getDb()->fetchRow("select * from xf_thread_banner where thread_id = ?", $threadId);
+        return $this->_getDb()->fetchRow("SELECT * FROM xf_thread_banner WHERE thread_id = ?", $threadId);
     }
 
     public function getThreadReplyBannerParser()
@@ -19,7 +19,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
 
     public function getThreadReplyBannerCacheId($threadId)
     {
-        return 'thread_banner_'.$threadId;
+        return 'thread_banner_' . $threadId;
     }
 
 
@@ -56,7 +56,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
 
             if ($cacheObject)
             {
-                $cacheObject->save($bannerText, $cacheId, array(), 86400);
+                $cacheObject->save($bannerText, $cacheId, [], 86400);
             }
         }
 
@@ -68,9 +68,9 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
         $cacheId = $this->getThreadReplyBannerCacheId($threadId);
         $cacheObject = $this->_getCache(true);
         $db = $this->_getDb();
-        if(empty($text))
+        if (empty($text))
         {
-            $db->query("delete from xf_thread_banner where thread_id = ? ", $threadId);
+            $db->query("DELETE FROM xf_thread_banner WHERE thread_id = ? ", $threadId);
             if ($cacheObject)
             {
                 $cacheObject->remove($cacheId);
@@ -78,20 +78,22 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
         }
         else
         {
-            $db->query("insert xf_thread_banner (thread_id, raw_text) values (?,?) ON DUPLICATE KEY UPDATE raw_text = VALUES(raw_text) ", array($threadId, $text));
+            $db->query("insert xf_thread_banner (thread_id, raw_text) values (?,?) ON DUPLICATE KEY UPDATE raw_text = VALUES(raw_text) ", [$threadId, $text]);
             if ($cacheObject)
             {
                 $banner = $this->getRawThreadReplyBanner($threadId);
                 $bbCodeParser = $this->getThreadReplyBannerParser();
                 $bannerText = $this->renderThreadReplyBanner($bbCodeParser, $banner);
-                $cacheObject->save($bannerText, $cacheId, array(), 86400);
+                $cacheObject->save($bannerText, $cacheId, [], 86400);
             }
         }
-        $db->query("update xf_thread
-            set has_banner = exists(select thread_id
-                                    from xf_thread_banner
-                                    where xf_thread_banner.thread_id = xf_thread.thread_id)
-            where thread_id = ?", $threadId);
+        $db->query(
+            "UPDATE xf_thread
+            SET has_banner = exists(SELECT thread_id
+                                    FROM xf_thread_banner
+                                    WHERE xf_thread_banner.thread_id = xf_thread.thread_id)
+            WHERE thread_id = ?", $threadId
+        );
     }
 
     public function canManageThreadReplyBanner(array $thread, array $forum, &$errorPhraseKey = '', array $nodePermissions = null, array $viewingUser = null)
