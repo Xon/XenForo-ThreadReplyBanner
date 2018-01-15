@@ -12,6 +12,7 @@ class SV_ThreadReplyBanner_Installer
             CREATE TABLE IF NOT EXISTS xf_thread_banner (
                 thread_id INT UNSIGNED NOT NULL PRIMARY KEY,
                 raw_text MEDIUMTEXT,
+                banner_state TINYINT(3) NOT NULL DEFAULT 1,
                 banner_user_id INT NOT NULL DEFAULT 0,
                 banner_edit_count INT NOT NULL DEFAULT 0,
                 banner_last_edit_date INT NOT NULL DEFAULT 0,
@@ -21,10 +22,11 @@ class SV_ThreadReplyBanner_Installer
         );
 
         SV_Utils_Install::addColumn('xf_thread', 'has_banner', 'TINYINT NOT NULL DEFAULT 0');
-        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_user_id', 'int not null default 0');
-        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_edit_count', 'int not null default 0');
-        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_last_edit_date', 'int not null default 0');
-        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_last_edit_user_id', 'int not null default 0');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_state', 'TINYINT(3) NOT NULL DEFAULT 1');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_user_id', 'INT NOT NULL DEFAULT 0');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_edit_count', 'INT NOT NULL DEFAULT 0');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_last_edit_date', 'INT NOT NULL DEFAULT 0');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_last_edit_user_id', 'INT NOT NULL DEFAULT 0');
 
         $db->query(
             "

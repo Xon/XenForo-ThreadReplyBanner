@@ -11,6 +11,7 @@ class SV_ThreadReplyBanner_DataWriter_ThreadBanner extends XenForo_DataWriter
             'xf_thread_banner' => [
                 'thread_id'                => ['type' => self::TYPE_UINT, 'required' => true],
                 'raw_text'                 => ['type' => self::TYPE_STRING, 'required' => true, 'max' => 16777215],
+                'banner_state'             => ['type' => self::TYPE_BOOLEAN, 'default' => 1],
                 'banner_user_id'           => ['type' => self::TYPE_UINT, 'default' => XenForo_Visitor::getUserId()],
                 'banner_last_edit_date'    => ['type' => self::TYPE_UINT, 'default' => 0],
                 'banner_last_edit_user_id' => ['type' => self::TYPE_UINT, 'default' => 0],
@@ -80,9 +81,9 @@ class SV_ThreadReplyBanner_DataWriter_ThreadBanner extends XenForo_DataWriter
 
         $this->_db->query(
             "UPDATE xf_thread
-            SET has_banner = 1
+            SET has_banner = ?
             WHERE thread_id = ?",
-            [$this->get('thread_id')]
+            [$this->get('banner_state'), $this->get('thread_id')]
         );
     }
 

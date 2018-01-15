@@ -70,7 +70,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
         $bannerText = '';
         $banner = $this->getRawThreadReplyBanner($thread['thread_id']);
 
-        if (!empty($banner))
+        if (!empty($banner['banner_state']))
         {
             $bbCodeParser = $this->getThreadReplyBannerParser();
             $bannerText = $this->renderThreadReplyBanner($bbCodeParser, $banner);
@@ -85,19 +85,29 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
     }
 
     /**
-     * @param int $threadId
+     * @param int    $threadId
      * @param string $text
+     * @param bool   $hardDelete
      */
-    public function updateThreadReplyBanner($threadId, $text)
+    public function updateThreadReplyBanner($threadId, $text, $hardDelete = false)
     {
         $cacheId = $this->getThreadReplyBannerCacheId($threadId);
         $cacheObject = $this->_getCache(true);
         if (empty($text))
         {
+
             /** @var SV_ThreadReplyBanner_DataWriter_ThreadBanner $dw */
             $dw = XenForo_DataWriter::create('SV_ThreadReplyBanner_DataWriter_ThreadBanner');
             $dw->setExistingData($threadId);
-            $dw->delete();
+            if ($hardDelete)
+            {
+                $dw->delete();
+            }
+            else
+            {
+                $dw->set('banner_state', false);
+                $dw->save();
+            }
 
             if ($cacheObject)
             {
@@ -118,6 +128,7 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
             {
                 $dw->set('thread_id', $threadId);
             }
+            $dw->set('banner_state', true);
             $dw->set('raw_text', $text);
             $dw->save();
 
