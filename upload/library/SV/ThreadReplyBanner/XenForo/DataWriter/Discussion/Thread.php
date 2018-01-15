@@ -9,7 +9,7 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
     protected function _discussionPreSave()
     {
         parent::_discussionPreSave();
-        if (empty(SV_ThreadReplyBanner_Globals::$banner) && !$this->isUpdate())
+        if (empty(SV_ThreadReplyBanner_Globals::$banner) || !$this->isUpdate())
         {
             return;
         }
