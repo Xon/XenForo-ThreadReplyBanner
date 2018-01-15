@@ -45,7 +45,7 @@ class SV_ThreadReplyBanner_EditHistoryHandler_ThreadBanner extends XenForo_EditH
     {
         //$bbCodeParser = $this->getThreadReplyBannerParser();
         //$bannerText = $this->renderThreadReplyBanner($bbCodeParser, $content['reply_banner']);
-        return htmlspecialchars($content['reply_banner']);
+        return htmlspecialchars($content['reply_banner']['raw_text']);
     }
 
     public function getTitle(array $content)
@@ -96,16 +96,8 @@ class SV_ThreadReplyBanner_EditHistoryHandler_ThreadBanner extends XenForo_EditH
         $dw->set('banner_edit_count', $dw->get('thread_title_edit_count') + 1);
         if ($dw->get('banner_edit_count'))
         {
-            if (!$previous || $previous['edit_user_id'] != $banner['banner_user_id'])
-            {
-                // if previous is a mod edit, don't show as it may have been hidden
-                $dw->set('banner_last_edit_date', 0);
-            }
-            else if ($previous && $previous['banner_last_edit_user_id'] == $banner['banner_user_id'])
-            {
-                $dw->set('banner_last_edit_date', $previous['edit_date']);
-                $dw->set('banner_last_edit_user_id', $previous['edit_user_id']);
-            }
+            $dw->set('banner_last_edit_date', $previous['edit_date']);
+            $dw->set('banner_last_edit_user_id', $previous['edit_user_id']);
         }
 
         return $dw->save();

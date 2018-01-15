@@ -22,7 +22,7 @@ class SV_ThreadReplyBanner_DataWriter_ThreadBanner extends XenForo_DataWriter
 
     protected function _getExistingData($data)
     {
-        if (!$id = $this->_getExistingPrimaryKey($data,'thread_id'))
+        if (!$id = $this->_getExistingPrimaryKey($data, 'thread_id'))
         {
             return false;
         }
@@ -104,9 +104,9 @@ class SV_ThreadReplyBanner_DataWriter_ThreadBanner extends XenForo_DataWriter
         $historyDw->bulkSet(
             [
                 'content_type' => 'thread_banner',
-                'content_id'   => $this->get('message_id'),
+                'content_id'   => $this->get('thread_id'),
                 'edit_user_id' => XenForo_Visitor::getUserId(),
-                'old_text'     => $this->getExisting('message')
+                'old_text'     => $this->getExisting('raw_text')
             ]
         );
         $historyDw->save();

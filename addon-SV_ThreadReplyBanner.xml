@@ -8,8 +8,8 @@
   <code_events/>
   <code_event_listeners>
     <listener event_id="load_class_controller" execute_order="4199" callback_class="SV_ThreadReplyBanner_Listener" callback_method="load_class" active="1" hint="XenForo_ControllerPublic_Thread" description="XenForo_ControllerPublic_Thread"/>
-    <listener event_id="load_class_model" execute_order="4199" callback_class="SV_ThreadReplyBanner_Listener" callback_method="load_class" active="1" hint="XenForo_Model_Thread" description="XenForo_Model_Thread"/>
     <listener event_id="load_class_datawriter" execute_order="4199" callback_class="SV_ThreadReplyBanner_Listener" callback_method="load_class" active="1" hint="XenForo_DataWriter_Discussion_Thread" description="XenForo_DataWriter_Discussion_Thread"/>
+    <listener event_id="load_class_model" execute_order="4199" callback_class="SV_ThreadReplyBanner_Listener" callback_method="load_class" active="1" hint="XenForo_Model_Thread" description="XenForo_Model_Thread"/>
   </code_event_listeners>
   <cron/>
   <email_templates/>
@@ -28,8 +28,10 @@
     <phrase title="moderator_log_thread_replybanner_deleted" version_id="10000" version_string="1.0.0"><![CDATA[Deleted a thread reply banner]]></phrase>
     <phrase title="permission_forum_sv_replybanner_manage" version_id="10000" version_string="1.0.0"><![CDATA[Manage Thread Reply Banner]]></phrase>
     <phrase title="permission_forum_sv_replybanner_show" version_id="10000" version_string="1.0.0"><![CDATA[View Thread Reply Banner]]></phrase>
+    <phrase title="sv_thread_banner_last_edited_by_x" version_id="1030000" version_string="1.3.0"><![CDATA[Last edited by {x}]]></phrase>
     <phrase title="thread_reply_banner" version_id="10000" version_string="1.0.0"><![CDATA[Thread Reply Banner]]></phrase>
     <phrase title="thread_reply_banner_explain" version_id="10000" version_string="1.0.0"><![CDATA[Thread reply banners are displayed above the editor.]]></phrase>
+    <phrase title="thread_reply_banner_history" version_id="1030000" version_string="1.3.0"><![CDATA[Banner History]]></phrase>
   </phrases>
   <route_prefixes/>
   <style_properties/>
@@ -49,20 +51,27 @@
 		</div>
 	</div>
 </xen:if>]]></template>
+    <template title="SV_ThreadReplyBanner_Fields" version_id="1030000" version_string="1.3.0"><![CDATA[<xen:if is="{$canEditThreadReplyBanner}">
+	<dl class="ctrlUnit ToggleTriggerAnchor">
+		<dt><label for="ctrl_thread_reply_banner">{xen:phrase thread_reply_banner}:</label>
+		<dfn>{xen:phrase you_may_use_bb_code}</dfn></dt>
+		<dd><textarea name="thread_reply_banner" id="ctrl_thread_reply_banner" class="textCtrl Elastic" maxlength="65536">{$thread.rawbanner.raw_text}</textarea>
+		<p class="explain">{xen:phrase thread_reply_banner_explain}</p>
+		
+		<xen:if is="{$thread.rawbanner.banner_edit_count}">
+			<span class="history">
+				<a href="{xen:link threads/reply-banner-history, $thread}" class="item control ToggleTrigger history" data-cacheOverlay="false">{xen:phrase thread_reply_banner_history}</a>
+			</span>
+		</xen:if>
+		</dd>
+	</dl>
+</xen:if>]]></template>
     <template title="ThreadReplyBanner.css" version_id="1010000" version_string="1.1.0"><![CDATA[.ThreadReplyBanner {
   display: block;
 }
 .hasJs .PanelScroller.ThreadReplyBanner .Panels {
   position: static;
 }]]></template>
-    <template title="SV_ThreadReplyBanner_Fields" version_id="1020000" version_string="1.2.0"><![CDATA[<xen:if is="{$canEditThreadReplyBanner}">
-	<dl class="ctrlUnit">
-		<dt><label for="ctrl_thread_reply_banner">{xen:phrase thread_reply_banner}:</label>
-		<dfn>{xen:phrase you_may_use_bb_code}</dfn></dt>
-		<dd><textarea name="thread_reply_banner" id="ctrl_thread_reply_banner" class="textCtrl Elastic" maxlength="65536">{$thread.rawbanner.raw_text}</textarea>
-		<p class="explain">{xen:phrase thread_reply_banner_explain}</p></dd>
-	</dl>
-</xen:if>]]></template>
   </templates>
   <public_template_modifications>
     <modification template="thread_fields_status" modification_key="SV_ThreadReplyBanner_Fields_thread_fields_status" description="Edit thread reply banner from editing a thread" execution_order="10" enabled="1" action="preg_replace">

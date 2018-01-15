@@ -2,6 +2,17 @@
 
 class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread
 {
+    public function actionReplyBannerHistory()
+    {
+        $this->_request->setParam('content_type', 'thread_banner');
+        $this->_request->setParam('content_id', $this->_input->filterSingle('thread_id', XenForo_Input::UINT));
+
+        return $this->responseReroute(
+            'XenForo_ControllerPublic_EditHistory',
+            'index'
+        );
+    }
+
     public function actionEdit()
     {
         $response = parent::actionEdit();
