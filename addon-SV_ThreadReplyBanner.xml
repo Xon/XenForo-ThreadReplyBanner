@@ -28,6 +28,7 @@
     <phrase title="moderator_log_thread_replybanner_deleted" version_id="10000" version_string="1.0.0"><![CDATA[Deleted a thread reply banner]]></phrase>
     <phrase title="permission_forum_sv_replybanner_manage" version_id="10000" version_string="1.0.0"><![CDATA[Manage Thread Reply Banner]]></phrase>
     <phrase title="permission_forum_sv_replybanner_show" version_id="10000" version_string="1.0.0"><![CDATA[View Thread Reply Banner]]></phrase>
+    <phrase title="sv_thread_banner_active" version_id="1030000" version_string="1.3.0"><![CDATA[Is Active]]></phrase>
     <phrase title="sv_thread_banner_last_edited_by_x" version_id="1030000" version_string="1.3.0"><![CDATA[Last edited by {x}]]></phrase>
     <phrase title="thread_reply_banner" version_id="10000" version_string="1.0.0"><![CDATA[Thread Reply Banner]]></phrase>
     <phrase title="thread_reply_banner_explain" version_id="10000" version_string="1.0.0"><![CDATA[Thread reply banners are displayed above the editor.]]></phrase>
@@ -55,14 +56,26 @@
 	<dl class="ctrlUnit ToggleTriggerAnchor">
 		<dt><label for="ctrl_thread_reply_banner">{xen:phrase thread_reply_banner}:</label>
 		<dfn>{xen:phrase you_may_use_bb_code}</dfn></dt>
-		<dd><textarea name="thread_reply_banner" id="ctrl_thread_reply_banner" class="textCtrl Elastic" maxlength="65536">{$thread.rawbanner.raw_text}</textarea>
-		<p class="explain">{xen:phrase thread_reply_banner_explain}</p>
-		
-		<xen:if is="{$thread.rawbanner.banner_edit_count}">
-			<span class="history">
-				<a href="{xen:link threads/reply-banner-history, $thread}" class="item control ToggleTrigger history" data-cacheOverlay="false">{xen:phrase thread_reply_banner_history}</a>
-			</span>
-		</xen:if>
+		<dd>
+			<ul>
+				<li>
+					<label for="ctrl_thread_banner_state">
+						<input type="checkbox" id="ctrl_thread_banner_state" value="1" name="thread_banner_state" {xen:checked '{$thread.rawbanner.banner_state}'}>
+						{xen:phrase sv_thread_banner_active}
+					</label>
+					<p class="explain"></p>
+				</li>
+				<li><textarea name="thread_reply_banner" id="ctrl_thread_reply_banner" class="textCtrl Elastic" maxlength="65536">{$thread.rawbanner.raw_text}</textarea>
+				<p class="explain">{xen:phrase thread_reply_banner_explain}</p>
+				</li>
+				<xen:if is="{$thread.rawbanner.banner_edit_count}">
+				<li>
+					<span class="history">
+						<a href="{xen:link threads/reply-banner-history, $thread}" class="item control ToggleTrigger history" data-cacheOverlay="false">{xen:phrase thread_reply_banner_history}</a>
+					</span>
+				</li>
+				</xen:if>
+			</ul>
 		</dd>
 	</dl>
 </xen:if>]]></template>

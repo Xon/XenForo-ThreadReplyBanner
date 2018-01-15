@@ -85,60 +85,27 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
     }
 
     /**
-     * @param int    $threadId
-     * @param string $text
-     * @param bool   $hardDelete
+     * @param int   $threadId
+     * @param array $banner
      */
-    public function updateThreadReplyBanner($threadId, $text, $hardDelete = false)
+    public function updateThreadBannerCache($threadId, array $banner = null)
     {
-        $cacheId = $this->getThreadReplyBannerCacheId($threadId);
-        $cacheObject = $this->_getCache(true);
-        if (empty($text))
+        $cache = $this->_getCache();
+        if (!$cache)
         {
-
-            /** @var SV_ThreadReplyBanner_DataWriter_ThreadBanner $dw */
-            $dw = XenForo_DataWriter::create('SV_ThreadReplyBanner_DataWriter_ThreadBanner');
-            $dw->setExistingData($threadId);
-            if ($hardDelete)
-            {
-                $dw->delete();
-            }
-            else
-            {
-                $dw->set('banner_state', false);
-                $dw->save();
-            }
-
-            if ($cacheObject)
-            {
-                $cacheObject->remove($cacheId);
-            }
+            return;
+        }
+        $cacheId = $this->getThreadReplyBannerCacheId($threadId);
+        if ($banner === null || empty($banner['banner_state']))
+        {
+            $cache->remove($cacheId);
         }
         else
         {
-            $banner = $this->getRawThreadReplyBanner($threadId);
+            $bbCodeParser = $this->getThreadReplyBannerParser();
+            $bannerText = $this->renderThreadReplyBanner($bbCodeParser, $banner);
 
-            /** @var SV_ThreadReplyBanner_DataWriter_ThreadBanner $dw */
-            $dw = XenForo_DataWriter::create('SV_ThreadReplyBanner_DataWriter_ThreadBanner');
-            if (isset($banner['thread_id']))
-            {
-                $dw->setExistingData($banner, true);
-            }
-            else
-            {
-                $dw->set('thread_id', $threadId);
-            }
-            $dw->set('banner_state', true);
-            $dw->set('raw_text', $text);
-            $dw->save();
-
-            if ($cacheObject)
-            {
-                $banner = $dw->getMergedData();
-                $bbCodeParser = $this->getThreadReplyBannerParser();
-                $bannerText = $this->renderThreadReplyBanner($bbCodeParser, $banner);
-                $cacheObject->save($bannerText, $cacheId, [], 86400);
-            }
+            $cache->save($bannerText, $cacheId, [], 86400);
         }
     }
 

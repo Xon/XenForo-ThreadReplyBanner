@@ -34,7 +34,10 @@ class SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread extends XFCP_SV_Threa
 
     public function actionSave()
     {
-        SV_ThreadReplyBanner_Globals::$controller = $this;
+        SV_ThreadReplyBanner_Globals::$banner = [
+            'raw_text' => $this->_input->filterSingle('thread_reply_banner', XenForo_Input::STRING),
+            'banner_state' => $this->_input->filterSingle('thread_banner_state', XenForo_Input::BOOLEAN),
+        ];
 
         return parent::actionSave();
     }

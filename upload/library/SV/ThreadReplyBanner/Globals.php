@@ -4,8 +4,8 @@
 // relying on the consumer being loaded correctly by the dynamic class autoloader
 class SV_ThreadReplyBanner_Globals
 {
-    /** @var SV_ThreadReplyBanner_XenForo_ControllerPublic_Thread */
-    public static $controller = null;
+    /** @var array */
+    public static $banner = null;
 
     private function __construct() { }
 }
