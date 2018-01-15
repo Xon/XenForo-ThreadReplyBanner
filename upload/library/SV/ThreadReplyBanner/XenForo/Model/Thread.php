@@ -2,27 +2,48 @@
 
 class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanner_XenForo_Model_Thread
 {
+    /**
+     * @param int $threadId
+     * @return array
+     */
     public function getRawThreadReplyBanner($threadId)
     {
         return $this->_getDb()->fetchRow("SELECT * FROM xf_thread_banner WHERE thread_id = ?", $threadId);
     }
 
+    /**
+     * @return XenForo_BbCode_Parser
+     */
     public function getThreadReplyBannerParser()
     {
         return XenForo_BbCode_Parser::create(XenForo_BbCode_Formatter_Base::create('Base'));
     }
 
+    /**
+     * @param XenForo_BbCode_Parser $bbCodeParser
+     * @param array                 $banner
+     * @return string
+     */
     public function renderThreadReplyBanner(XenForo_BbCode_Parser $bbCodeParser, array $banner)
     {
         return $bbCodeParser->render($banner['raw_text']);
     }
 
+    /**
+     * @param int $threadId
+     * @return string
+     */
     public function getThreadReplyBannerCacheId($threadId)
     {
         return 'thread_banner_' . $threadId;
     }
 
-
+    /**
+     * @param            $thread
+     * @param array|null $nodePermissions
+     * @param array|null $viewingUser
+     * @return null|string
+     */
     public function getThreadReplyBanner($thread, array $nodePermissions = null, array $viewingUser = null)
     {
         if (empty($thread['has_banner']))
@@ -63,14 +84,21 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
         return $bannerText;
     }
 
+    /**
+     * @param int $threadId
+     * @param string $text
+     */
     public function updateThreadReplyBanner($threadId, $text)
     {
         $cacheId = $this->getThreadReplyBannerCacheId($threadId);
         $cacheObject = $this->_getCache(true);
-        $db = $this->_getDb();
         if (empty($text))
         {
-            $db->query("DELETE FROM xf_thread_banner WHERE thread_id = ? ", $threadId);
+            /** @var SV_ThreadReplyBanner_DataWriter_ThreadBanner $dw */
+            $dw = XenForo_DataWriter::create('SV_ThreadReplyBanner_DataWriter_ThreadBanner');
+            $dw->setExistingData($threadId);
+            $dw->delete();
+
             if ($cacheObject)
             {
                 $cacheObject->remove($cacheId);
@@ -78,24 +106,40 @@ class SV_ThreadReplyBanner_XenForo_Model_Thread extends XFCP_SV_ThreadReplyBanne
         }
         else
         {
-            $db->query("insert xf_thread_banner (thread_id, raw_text) values (?,?) ON DUPLICATE KEY UPDATE raw_text = VALUES(raw_text) ", [$threadId, $text]);
+            $banner = $this->getRawThreadReplyBanner($threadId);
+
+            /** @var SV_ThreadReplyBanner_DataWriter_ThreadBanner $dw */
+            $dw = XenForo_DataWriter::create('SV_ThreadReplyBanner_DataWriter_ThreadBanner');
+            if (isset($banner['thread_id']))
+            {
+                $dw->setExistingData($banner, true);
+            }
+            else
+            {
+                $dw->set('thread_id', $threadId);
+            }
+            $dw->set('raw_text', $text);
+            $dw->save();
+
             if ($cacheObject)
             {
-                $banner = $this->getRawThreadReplyBanner($threadId);
+                $banner = $dw->getMergedData();
                 $bbCodeParser = $this->getThreadReplyBannerParser();
                 $bannerText = $this->renderThreadReplyBanner($bbCodeParser, $banner);
                 $cacheObject->save($bannerText, $cacheId, [], 86400);
             }
         }
-        $db->query(
-            "UPDATE xf_thread
-            SET has_banner = exists(SELECT thread_id
-                                    FROM xf_thread_banner
-                                    WHERE xf_thread_banner.thread_id = xf_thread.thread_id)
-            WHERE thread_id = ?", $threadId
-        );
     }
 
+    /**
+     * @param array      $thread
+     * @param array      $forum
+     * @param string     $errorPhraseKey
+     * @param array|null $nodePermissions
+     * @param array|null $viewingUser
+     * @return bool
+     * @throws XenForo_Exception
+     */
     public function canManageThreadReplyBanner(array $thread, array $forum, &$errorPhraseKey = '', array $nodePermissions = null, array $viewingUser = null)
     {
         $this->standardizeViewingUserReferenceForNode($thread['node_id'], $viewingUser, $nodePermissions);

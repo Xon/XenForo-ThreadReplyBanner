@@ -71,9 +71,15 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
     protected function _discussionPostDelete()
     {
         parent::_discussionPostDelete();
+
+        $threadId = $this->get('thread_id');
         $this->_db->query(
             'DELETE FROM xf_thread_banner WHERE thread_id = ?'
-            , $this->get('thread_id')
+            , $threadId
+        );
+        $this->_db->query(
+            'DELETE FROM xf_edit_history WHERE content_type = \'thread_banner\' and content_id = ?'
+            , $threadId
         );
     }
 }

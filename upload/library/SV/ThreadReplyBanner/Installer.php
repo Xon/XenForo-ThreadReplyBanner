@@ -11,12 +11,38 @@ class SV_ThreadReplyBanner_Installer
             "
             CREATE TABLE IF NOT EXISTS xf_thread_banner (
                 thread_id INT UNSIGNED NOT NULL PRIMARY KEY,
-                raw_text MEDIUMTEXT
+                raw_text MEDIUMTEXT,
+                banner_user_id INT NOT NULL DEFAULT 0,
+                banner_edit_count INT NOT NULL DEFAULT 0,
+                banner_last_edit_date INT NOT NULL DEFAULT 0,
+                banner_last_edit_user_id INT NOT NULL DEFAULT 0
             ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci
         "
         );
 
         SV_Utils_Install::addColumn('xf_thread', 'has_banner', 'TINYINT NOT NULL DEFAULT 0');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_user_id', 'int not null default 0');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_edit_count', 'int not null default 0');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_last_edit_date', 'int not null default 0');
+        SV_Utils_Install::addColumn('xf_thread_banner', 'banner_last_edit_user_id', 'int not null default 0');
+
+        $db->query(
+            "
+            INSERT IGNORE INTO xf_content_type
+                (content_type, addon_id, fields)
+            VALUES
+                ('thread_banner', 'SV_ThreadReplyBanner', '')
+        "
+        );
+
+        $db->query(
+            "
+            INSERT IGNORE INTO xf_content_type_field
+                (content_type, field_name, field_value)
+            VALUES
+                ('thread_banner', 'edit_history_handler_class', 'SV_ThreadReplyBanner_EditHistoryHandler_ThreadBanner')
+        "
+        );
 
         if ($version == 0)
         {
@@ -66,6 +92,29 @@ class SV_ThreadReplyBanner_Installer
             "
             DELETE FROM xf_permission_entry
             WHERE permission_group_id = 'forum' AND permission_id IN ('sv_replybanner_show', 'sv_replybanner_manage')
+        "
+        );
+
+        $db->query(
+            "
+            DELETE 
+            FROM  xf_content_type 
+            WHERE content_type = 'thread_banner'
+        "
+        );
+
+        $db->query(
+            "
+            DELETE 
+            FROM  xf_content_type_field 
+            WHERE content_type = 'thread_banner'
+        "
+        );
+
+        $db->query(
+            "
+            DELETE FROM xf_edit_history
+            WHERE content_type = 'thread_banner'
         "
         );
 
