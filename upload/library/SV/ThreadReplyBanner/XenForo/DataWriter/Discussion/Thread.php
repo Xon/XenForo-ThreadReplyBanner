@@ -60,10 +60,16 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
     {
         parent::_discussionPostDelete();
 
-        /** @var SV_ThreadReplyBanner_DataWriter_ThreadBanner $dw */
-        $dw = XenForo_DataWriter::create('SV_ThreadReplyBanner_DataWriter_ThreadBanner', self::ERROR_SILENT);
-        $dw->setExistingData($this->get('thread_id'));
-        $dw->setOption(SV_ThreadReplyBanner_DataWriter_ThreadBanner::OPTION_THREAD, $this->getMergedData());
-        $dw->delete();
+        /** @var SV_ThreadReplyBanner_XenForo_Model_Thread $threadModel */
+        $threadModel = $this->_getThreadModel();
+        $banner = $threadModel->getRawThreadReplyBanner($this->get('thread_id'));
+        if ($banner)
+        {
+            /** @var SV_ThreadReplyBanner_DataWriter_ThreadBanner $dw */
+            $dw = XenForo_DataWriter::create('SV_ThreadReplyBanner_DataWriter_ThreadBanner', self::ERROR_SILENT);
+            $dw->setExistingData($this->get('thread_id'));
+            $dw->setOption(SV_ThreadReplyBanner_DataWriter_ThreadBanner::OPTION_THREAD, $this->getMergedData());
+            $dw->delete();
+        }
     }
 }
