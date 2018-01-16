@@ -33,6 +33,13 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
         }
         else
         {
+            // do not insert the banner row
+            if (empty(SV_ThreadReplyBanner_Globals::$banner['raw_text']))
+            {
+                $this->bannerDw = null;
+                return;
+            }
+
             $this->bannerDw->set('thread_id', $this->get('thread_id'));
         }
         $this->bannerDw->bulkSet(SV_ThreadReplyBanner_Globals::$banner);
@@ -56,7 +63,7 @@ class SV_ThreadReplyBanner_XenForo_DataWriter_Discussion_Thread extends XFCP_SV_
         /** @var SV_ThreadReplyBanner_DataWriter_ThreadBanner $dw */
         $dw = XenForo_DataWriter::create('SV_ThreadReplyBanner_DataWriter_ThreadBanner', self::ERROR_SILENT);
         $dw->setExistingData($this->get('thread_id'));
-        $this->bannerDw->setOption(SV_ThreadReplyBanner_DataWriter_ThreadBanner::OPTION_THREAD, $this->getMergedData());
+        $dw->setOption(SV_ThreadReplyBanner_DataWriter_ThreadBanner::OPTION_THREAD, $this->getMergedData());
         $dw->delete();
     }
 }
