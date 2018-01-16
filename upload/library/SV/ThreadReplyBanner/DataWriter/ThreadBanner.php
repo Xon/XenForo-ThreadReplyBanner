@@ -13,7 +13,7 @@ class SV_ThreadReplyBanner_DataWriter_ThreadBanner extends XenForo_DataWriter
         return [
             'xf_thread_banner' => [
                 'thread_id'                => ['type' => self::TYPE_UINT, 'required' => true],
-                'raw_text'                 => ['type' => self::TYPE_STRING, 'required' => true, 'verification' => ['$this', '_verifyBannerText']],
+                'raw_text'                 => ['type' => self::TYPE_STRING, 'verification' => ['$this', '_verifyBannerText']],
                 'banner_state'             => ['type' => self::TYPE_BOOLEAN, 'default' => 1],
                 'banner_user_id'           => ['type' => self::TYPE_UINT, 'default' => XenForo_Visitor::getUserId()],
                 'banner_last_edit_date'    => ['type' => self::TYPE_UINT, 'default' => 0],
@@ -25,6 +25,8 @@ class SV_ThreadReplyBanner_DataWriter_ThreadBanner extends XenForo_DataWriter
 
     protected function _verifyBannerText(&$raw_text)
     {
+        $raw_text = strval($raw_text);
+
         if (strlen($raw_text) > self::banner_length)
         {
             $this->error(new XenForo_Phrase('please_enter_value_using_x_characters_or_fewer', ['count' => self::banner_length]));
